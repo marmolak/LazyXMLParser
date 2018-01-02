@@ -23,6 +23,7 @@ class LazyXMLIterator implements \Iterator
         $this->xml = new \XMLReader();
         $ok = $this->xml->open('file://' . $this->xml_file);
         if (!$ok) {
+            $this->xml = NULL;
             throw new Exception("Iterator error: Unable to open file: {$this->xml_file}");
         }
 
