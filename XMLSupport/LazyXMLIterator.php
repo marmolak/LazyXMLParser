@@ -5,14 +5,14 @@ class LazyXMLIterator implements \Iterator
 {
     var $xml_file = NULL;
     var $xml = NULL;
-    var $xml_map = array();
+    var $root_element = array();
     var $si = NULL;
     var $position = 0;
 
-    public function __construct($xml_file, $xml_map)
+    public function __construct($xml_file, $root_element)
     {
         $this->xml_file = $xml_file;
-        $this->xml_map = $xml_map;
+        $this->root_element = $root_element;
     }
 
     // Open file and find first occurence of node
@@ -22,7 +22,7 @@ class LazyXMLIterator implements \Iterator
         $this->si = NULL;
         $this->xml = new \XMLReader();
         $this->xml->open('file://' . $this->xml_file);
-        while ($this->xml->read() && $this->xml->name !== $this->xml_map['root']);
+        while ($this->xml->read() && $this->xml->name !== $this->root_element);
         $this->si = \simplexml_load_string($this->xml->readOuterXML(), 'SimpleXMLElement', LIBXML_NOENT | LIBXML_NOCDATA | LIBXML_COMPACT);
     }
 
@@ -37,7 +37,7 @@ class LazyXMLIterator implements \Iterator
 
     public function next()
     {
-        $this->xml->next($this->xml_map['root']);
+        $this->xml->next($this->root_element);
         $this->si = \simplexml_load_string($this->xml->readOuterXML(), 'SimpleXMLElement', LIBXML_NOENT | LIBXML_NOCDATA | LIBXML_COMPACT);
         ++$this->position;
     }
@@ -49,7 +49,7 @@ class LazyXMLIterator implements \Iterator
 
     public function valid()
     {
-        $valid = ($this->xml->name == $this->xml_map['root']);
+        $valid = ($this->xml->name == $this->root_element);
         return $valid;
     }
 
