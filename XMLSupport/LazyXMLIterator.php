@@ -21,7 +21,11 @@ class LazyXMLIterator implements \Iterator
         $this->position = 0;
         $this->si = NULL;
         $this->xml = new \XMLReader();
-        $this->xml->open('file://' . $this->xml_file);
+        $ok = $this->xml->open('file://' . $this->xml_file);
+        if (!$ok) {
+            throw new Exception("Iterator error: Unable to open file: {$this->xml_file}");
+        }
+
         while ($this->xml->read() && $this->xml->name !== $this->root_element);
         $this->si = \simplexml_load_string($this->xml->readOuterXML(), 'SimpleXMLElement', LIBXML_NOENT | LIBXML_NOCDATA | LIBXML_COMPACT);
     }
